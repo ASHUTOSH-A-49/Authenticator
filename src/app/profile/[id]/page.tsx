@@ -10,5 +10,6 @@ export default async function UserProfile({params}:any){
             <p className="text-4xl">profile page <span className="text-black bg-purple-400 rounded p-1">{id}</span></p>
 
         </div>
+        
     )
 }

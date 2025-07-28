@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server'
- 
+ //middlewares plays crucial role in development 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
