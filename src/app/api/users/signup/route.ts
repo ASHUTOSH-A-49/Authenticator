@@ -6,12 +6,14 @@ import { NextRequest,NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 
 
-connect();//connecting to the database
+await connect();//connecting to the database
+console.log("Database connected ")
 
 
 //Handle the POST REQUEST
 
 export async function POST(request:NextRequest){
+    
     try {
         // handle the data 
         const reqBody = await request.json()
@@ -20,7 +22,10 @@ export async function POST(request:NextRequest){
         // sample of console: 
         // { email: 'abcde@gmail.com', password: 'abcde12345', username: 'abcde' }
         //check if user already exists
-        const user =  await User.findOne({email})
+        
+        const user = await User.findOne({ email });
+        
+
 
         if(user){
             return NextResponse.json({error:"User already exists"},{status:400})
@@ -28,8 +33,11 @@ export async function POST(request:NextRequest){
 
 
         //Hashing password 
-        const salt = await bcryptjs.genSalt(10)
-        const hashedPassword = await bcryptjs.hash(password,salt)
+       
+const salt = await bcryptjs.genSalt(10);
+const hashedPassword = await bcryptjs.hash(password, salt);
+
+
 
         //create an user 
         const newUser = new User({
@@ -40,8 +48,19 @@ export async function POST(request:NextRequest){
 
         //save it into the database
 
-        const savedUser = await newUser.save()
-        console.log(savedUser);
+       
+// try {
+  const savedUser = await newUser.save();
+  console.log("User saved:", savedUser);
+  
+// } catch (saveErr) {
+//   console.error("Error saving user:", saveErr);
+//   return NextResponse.json({ error: "Error saving user" }, { status: 500 });
+// }
+
+
+
+
 
         // sample of console
 //         {
@@ -58,16 +77,18 @@ export async function POST(request:NextRequest){
 
         //return a response
 
-        return NextResponse.json({
+     return NextResponse.json({
             message:"User created successfully!",
             success:true,
             savedUser
-        })
+        })   
 
 
-    } catch (error:any) {
-        return NextResponse.json({error:error.message},{status:500})
-    }
+    } catch (error: any) {
+  console.error("Signup API Error:", error); // <-- LOG EVERYTHING
+  return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+}
+
 }
 
 
