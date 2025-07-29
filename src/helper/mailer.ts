@@ -8,7 +8,7 @@ import User from '@/models/userModel';
 
 import bcrypt from 'bcryptjs';
 
-const sendEmail = async ({ email, emailType, userId }: any) => {
+export const sendEmail = async ({ email, emailType, userId }: any) => {
     try {
         //creating our hashed token  
         const hashedToken = await bcrypt.hash(userId.toString(), 10);
@@ -32,8 +32,10 @@ const sendEmail = async ({ email, emailType, userId }: any) => {
             host: "sandbox.smtp.mailtrap.io",
             port: 2525,
             auth: {
-                user: process.env.MAILTRAP_USER,
-                pass: process.env.MAILTRAP_PASS
+                // user: process.env.MAILTRAP_USER,
+                // pass: process.env.MAILTRAP_PASS
+                user: "4cf7b853772b98",
+                pass: "e950564c887772"
             }
         });
 

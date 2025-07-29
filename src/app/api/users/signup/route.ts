@@ -4,6 +4,7 @@ import User from "@/models/userModel";
 import { NextRequest,NextResponse } from "next/server";
 
 import bcryptjs from "bcryptjs";
+import {sendEmail} from "@/helper/mailer"
 
 
 await connect();//connecting to the database
@@ -74,6 +75,14 @@ const hashedPassword = await bcryptjs.hash(password, salt);
 // }
 
 // and now the above user you will find in your database (MONGODB)
+
+
+
+
+
+//send verification email 
+
+await sendEmail({email,emailType:"VERIFY",userId:savedUser._id})
 
         //return a response
 
