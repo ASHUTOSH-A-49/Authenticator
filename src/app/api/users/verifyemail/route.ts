@@ -7,32 +7,38 @@ import User from "@/models/userModel";
 
 connect();
 
-export async function  POST(request:NextRequest){
+export async function POST(request: NextRequest) {
     try {
-        const reqBody = await request.json()
-        const{token} = reqBody;  //extract the token from request.json 
-        console.log(token);
+        const reqBody = await request.json();
+        const { token } = reqBody;
 
+        console.log("Received token:", token);
 
-        const user = await User.findOne({verifyToken:token,
-            verifyTokenExpiry:{$gt:Date.now()}
-        })
+        const user = await User.findOne({ verifyToken: token });
+        console.log("User found by token only:", user);
 
-        if(!user){
-            return NextResponse.json({error:"Invalid token"},{status:400})
+        const validUser = await User.findOne({
+            verifyToken: token,
+            verifyTokenExpiry: { $gt: Date.now() }
+        });
+
+        if (!validUser) {
+            console.log("Token not valid or expired");
+            return NextResponse.json({ error: "Invalid token" }, { status: 400 });
         }
 
-        console.log(user)
+        console.log("User to verify:", validUser);
 
-        user.isVerified = true;
-        user.verifyToken = undefined;
-        user.verifyTokenExpiry = undefined;
+        validUser.isVerified = true;
+        validUser.verifyToken = undefined;
+        validUser.verifyTokenExpiry = undefined;
 
-        await user.save();
+        await validUser.save();
 
-        return NextResponse.json({message:"email verified",success:true},{status:200})
-    } catch (error:any) {
-        return NextResponse.json({error:error.message},{status:500})
+        return NextResponse.json({ message: "email verified", success: true }, { status: 200 });
 
+    } catch (error: any) {
+        console.error("Error verifying email:", error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

@@ -1,34 +1,36 @@
 import { NextResponse, NextRequest } from 'next/server'
  //middlewares plays crucial role in development 
 // This function can be marked `async` if using `await` inside
+
+
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
+  const token = request.cookies.get('token')?.value || ''
 
-//   we will declare which paths are public and which paths are not public 
-  const isPublic = path==='/login' || path==='/signup' || path === '/verifyemail'
-//   login and signup paths should not be visible to somebody who has tokens
+  const isPublicPath = path === '/login' || path === '/signup' || path === '/verifyemail'
 
-const token = request.cookies.get('token')?.value || ''
-// token may be or may not be there that's why we have used the optional value '?'
+  // console.log('➡️ Request path:', path)
+  // console.log('🪪 Token:', token)
+  // console.log('🌐 isPublic:', isPublicPath)
 
-if(isPublic && token){
-    return NextResponse.redirect(new URL('/',request.nextUrl))
+  if (isPublicPath && token) {
+    // console.log('🔁 Redirect: already logged in → home')
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  if (!isPublicPath && !token) {
+    // console.log('🔒 Redirect: not logged in → login')
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
+  return NextResponse.next()
 }
 
-if(!isPublic && !token){
-    return NextResponse.redirect(new URL('/login',request.nextUrl))
-}
-
-
-  
-}
- 
 export const config = {
-  matcher: [
-    '/',
-    '/profile',
-    '/login',
-    '/signup',
-    '/verifyemail'
-  ]
+  matcher: ['/((?!_next|api|static|favicon.ico).*)'],
 }
+
+ 
+
+
+//matches all routes except Next.js internals and lets you control access based on token presence

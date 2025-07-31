@@ -6,7 +6,7 @@ import Link from "next/link"
 import Router from "next/router"
 import React,{ useEffect,useState } from "react"
 
-export default function verifyEmailPage(){
+export default function VerifyEmailPage(){
 
     const[token,setToken] = useState("");
     const[verified,setVerified] = useState(false)
@@ -24,7 +24,8 @@ export default function verifyEmailPage(){
     }
     // useEffect is a hook that automatically runs as soon as the page is loaded 
     useEffect(()=>{
-        const urlToken= window.location.search.split("=")[1];
+        const urlToken = decodeURIComponent(window.location.search.split("=")[1] || "");
+
         setToken(urlToken || "")
         // as soon as token is set, i.e. th token is updated then the below useEffect hook will run automatically 
     },[token])
